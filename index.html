@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Cipher Adventure</title>
+        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    </head>
+    <body style="background-color:black;" class="ring-white text-white">
+        <div class = "md:max-w-1/4 m-auto">
+            <div id="map" class="container grid grid-cols-4 grid-rows-4 rounded-md ring-2 aspect-square my-4 p-4">
+                <div id="00"></div>
+                <div id="01"></div>
+                <div id="02"></div>
+                <div id="03"></div>
+                <div id="10"></div>
+                <div id="11"></div>
+                <div id="12"></div>
+                <div id="13"></div>
+                <div id="20"></div>
+                <div id="21"></div>
+                <div id="22"></div>
+                <div id="23"></div>
+                <div id="30"></div>
+                <div id="31"></div>
+                <div id="32"></div>
+                <div id="33"></div>
+            </div>
+            <div id="descbox" class="rounded-md ring-2 my-4 px-3 py-2">
+                <p id="roomdesc"></p>
+                <br>
+                <p>What will you do?</p>
+            </div>
+            <div id="inputbox" class="rounded-md ring-2 my-4 px-3 py-2">
+                <input id="userinput" type="text" placeholder="Enter a command here" class="w-full">
+            </div>
+        </div>
+        <script src="game.js"></script>
+    </body>
+</html>
