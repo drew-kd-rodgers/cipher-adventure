@@ -14,7 +14,7 @@ class Room {
     }
 }
 
-const entrance = new Room("blocked entrance", "You awake in a dark room. You're an adventurer, at least you think, guided by mysterious voices. One such voice identifies itself as Vigenere and speaks to you, \"Vo gwvgj. Patience is key.\"")
+const entrance = new Room("blocked entrance", "You awake in a dark room. You're an adventurer, at least you think, guided by mysterious voices. One such voice identifies itself as Vigenere and speaks to you, <br><br>\"Vo gwvgj. Patience is key.\"")
 entrance.openDirs = [true, false, false, false];
 
 const firstHall = new Room("decrepit hall", "There are cracks along the stone walls. Wherever you are, it has clearly not been maintained for some time.")
@@ -33,6 +33,7 @@ const roomGrid = [
     [null, entrance, null, null]
 ];
 roomPos = [3, 1];
+canSee = false;
 
 function getCurrentRoom() {
     return roomGrid[roomPos[0]][roomPos[1]];
@@ -49,17 +50,22 @@ function mapDisplay() {
                 if (room.openDirs[0]) {
                     gridSpace.style.borderTop = "";
                 } else {
-                    gridSpace.style.borderTop = "thick solid #000000"
+                    gridSpace.style.borderTop = "thick solid black"
                 }
 
                 if (room == getCurrentRoom()) {
                     gridSpace.style.backgroundColor = "yellow";
                 } else {
-                    gridSpace.style.backgroundColor = "rgb(150, 150, 150)";
+                    gridSpace.style.backgroundColor = canSee ? "rgb(150, 150, 150)" : "black";
                 }
             }
         }
     }
 }
 
+function describeRoom() {
+    document.getElementById("roomdesc").innerHTML = "You are in a " + getCurrentRoom().displayName + ".<br><br>" + getCurrentRoom().desc;
+}
+
 mapDisplay();
+describeRoom();
