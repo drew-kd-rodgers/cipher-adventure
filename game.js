@@ -21,11 +21,45 @@ const firstHall = new Room("decrepit hall", "There are cracks along the stone wa
 firstHall.openDirs = [true, false, true, false];
 
 const firstCorner = new Room("dusty corner", "To the north is a metal door chained up with a lock, but there is white light coming through. To the west is a foreboding doorway into a dark room.")
-firstHall.openDirs = [false, false, true, true];
+firstCorner.openDirs = [false, false, true, true];
+
+const exit = new Room("brightly-lit exit", "You feel the warmth of sunlight on your face as you step through the once-chained metal door. It seems you are free from this place.")
+exit.openDirs = [true, false, true, false];
 
 const roomGrid = [
-    [null, null, null, null],
+    [null, exit, null, null],
     [null, firstCorner, null, null],
     [null, firstHall, null, null],
     [null, entrance, null, null]
 ];
+roomPos = [3, 1];
+
+function getCurrentRoom() {
+    return roomGrid[roomPos[0]][roomPos[1]];
+}
+
+function mapDisplay() {
+    for (let i = 0 ; i < roomGrid.length ; i++) {
+        for (let j = 0 ; j < roomGrid[i].length ; j++) {
+            let gridSpace = document.getElementById(i.toString() + j.toString());
+            let room = roomGrid[i][j];
+            if (room == null) {
+                gridSpace.style.backgroundColor = "black";
+            } else {
+                if (room.openDirs[0]) {
+                    gridSpace.style.borderTop = "";
+                } else {
+                    gridSpace.style.borderTop = "thick solid #000000"
+                }
+
+                if (room == getCurrentRoom()) {
+                    gridSpace.style.backgroundColor = "yellow";
+                } else {
+                    gridSpace.style.backgroundColor = "rgb(150, 150, 150)";
+                }
+            }
+        }
+    }
+}
+
+mapDisplay();
