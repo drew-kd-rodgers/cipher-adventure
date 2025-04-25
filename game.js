@@ -23,8 +23,8 @@ entrance.openDirs = [true, false, false, false];
 const firstHall = new Room("decrepit hall", "There are cracks along the stone walls. Wherever you are, it has clearly not been maintained for some time. A voice named Caesar warns,<br><br>\"Phbibqlk kloqetbpq!\"")
 firstHall.openDirs = [true, false, true, false];
 
-const firstCorner = new Room("dusty corner", "To the north is a metal door chained up with a lock, but there is white light coming through. To the west is a foreboding doorway into a dark room.")
-firstCorner.openDirs = [false, false, true, true];
+const firstCorner = new Room("dusty corner", "To the north is a metal door chained up with a lock, but there is white light coming through. To the west is a foreboding doorway into a dark room. To the east is a cramped-looking tunnel.")
+firstCorner.openDirs = [false, true, true, true];
 
 const exit = new Room("brightly-lit exit", "You feel the warmth of sunlight on your face as you step through the once-chained metal door. It seems you are free from this place.")
 exit.openDirs = [true, false, true, false];
@@ -38,17 +38,33 @@ skeleton.sayResponse = function(message) {
         this.desc = "It looks at you happily, its day brightened by your compliment, and wishes you luck in finding a way to escape.";
         describeAction("The skeleton is surprised, and stops attacking.<br><br>\"...Really? Wow, nobody has said anything nice to me ever since I became a skeleton..! Here, take this key. It doesn't work on the main door, but maybe it will still help?\"");
         this.pacified = true;
+        slimeApproach.openDirs[2] = true;
+        slimeApproach.desc = "Just when you thought this place couldn't be less pleasant, this hallway has various splatters of translucent green slime. With the skeleton's key, you unlock the door at the south end of the hallway.";
         return true;
     }
     return false;
 }
 skeletonRoom.ent = skeleton;
 
+const tunnelHall = new Room("narrow tunnel", "As your crawl through, you have to wonder who chose to build this in the first place. The tunnel ends at east and west.");
+tunnelHall.openDirs = [false, true, false, true];
+
+const tunnelCorner = new Room("tunnel's end", "You emerge from the cramped space and thankfully see a much wider hallway south. You could go back west, as much as you dread the thought.");
+tunnelCorner.openDirs = [false, false, true, true];
+
+const slimeApproach = new Room("slimy hallway", "Just when you thought this place couldn't be less pleasant, this hallway has various splatters of translucent green slime, leading south to a locked door.");
+slimeApproach.openDirs = [true, false, false, false];
+
+const slimeRoom = new Room("slime closet", "It is a small room occupied almost fully by its occupant, but surprisingly clean besides all the slime.");
+slime = new Entity("giant, talking slime", "It imparts upon you some sort of psychic message, not unlike the voices guiding you.<br><br>\"I know what you seek, and where you may find it. Go back whence you came, and declare yourself silent.\"");
+slimeRoom.ent = slime;
+slimeRoom.openDirs = [true, false, false, false];
+
 const roomGrid = [
     [null, exit, null, null],
-    [skeletonRoom, firstCorner, null, null],
-    [null, firstHall, null, null],
-    [null, entrance, null, null]
+    [skeletonRoom, firstCorner, tunnelHall, tunnelCorner],
+    [null, firstHall, null, slimeApproach],
+    [null, entrance, null, slimeRoom]
 ];
 roomPos = [3, 1];
 canSee = false;
