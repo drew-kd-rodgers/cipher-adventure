@@ -12,6 +12,9 @@ class Room {
     constructor(displayName, desc) {
         this.displayName = displayName;
         this.desc = desc;
+        this.sayResponse = function(message){
+            return false;
+        }
         this.ent = null;
         this.openDirs = [false,false,false,false]; // North East South West
     }
@@ -19,6 +22,14 @@ class Room {
 
 const entrance = new Room("blocked entrance", "You awake in a dark room. You're an adventurer, at least you think, guided by mysterious voices. One such voice identifies itself as Vigenere and speaks to you, <br><br>\"Vo gwvgj. Patience is key.\"")
 entrance.openDirs = [true, false, false, false];
+entrance.gotKey = false;
+entrance.sayResponse = function(message) {
+    if (message == "nothing") {
+        describeAction("Your vision goes dark as the guiding voices speak to you for what you feel may be the final time. First Ay-won, then Caesar, and lastly Vigenere give you their guidance in one combined message.<br><br>\"23-16-20-3-2-26  5-25-19  26-26-10  18-2-19  26-25-11-19-7  15-19-22  26-4-24-22.  17-5-2  8-2-22  6-16  22-12-18-15-16.\"");
+        return true;
+    }
+    return false;
+}
 
 const firstHall = new Room("decrepit hall", "There are cracks along the stone walls. Wherever you are, it has clearly not been maintained for some time. A voice named Caesar warns,<br><br>\"Phbibqlk kloqetbpq!\"")
 firstHall.openDirs = [true, false, true, false];
@@ -26,7 +37,7 @@ firstHall.openDirs = [true, false, true, false];
 const firstCorner = new Room("dusty corner", "To the north is a metal door chained up with a lock, but there is white light coming through. To the west is a foreboding doorway into a dark room. To the east is a cramped-looking tunnel.")
 firstCorner.openDirs = [false, true, true, true];
 
-const exit = new Room("brightly-lit exit", "You feel the warmth of sunlight on your face as you step through the once-chained metal door. It seems you are free from this place.")
+const exit = new Room("brightly-lit exit", "You feel the warmth of sunlight on your face as you step through the once-chained metal door. Freedom is just a few steps to the north.")
 exit.openDirs = [true, false, true, false];
 
 const skeletonRoom = new Room("skeleton's chamber", "The ground is strewn with various trinkets, and cuffs hang from the walls by chains.");
@@ -89,6 +100,21 @@ function mapDisplay() {
                 } else {
                     gridSpace.style.borderTop = "thick solid black"
                 }
+                if (room.openDirs[1]) {
+                    gridSpace.style.borderRight = "";
+                } else {
+                    gridSpace.style.borderRight = "thick solid black"
+                }
+                if (room.openDirs[2]) {
+                    gridSpace.style.borderBottom = "";
+                } else {
+                    gridSpace.style.borderBottom = "thick solid black"
+                }
+                if (room.openDirs[3]) {
+                    gridSpace.style.borderLeft = "";
+                } else {
+                    gridSpace.style.borderLeft = "thick solid black"
+                }
 
                 if (room == getCurrentRoom()) {
                     gridSpace.style.backgroundColor = "yellow";
@@ -119,10 +145,10 @@ document.getElementById("userinput").addEventListener("keydown", function (e) {
                 }
                 return;
             case "say":
+                input.splice(0,1);
                 if (getCurrentRoom().ent == null) {
-                    describeAction("You speak, but nobody is around to hear you.");
+                    tellRoom(getCurrentRoom(), input.join(" "));
                 } else {
-                    input.splice(0,1);
                     tellEntity(getCurrentRoom().ent, input.join(" "));
                 }
                 return;
@@ -153,6 +179,13 @@ function goDirection(dir) {
                 return moveTo(roomPos[0], roomPos[1]-1);
             }
         break;
+        case "lock":
+            if (getCurrentRoom() == firstCorner) {
+                describeAction("You became the key and unlocked the chain around the metal door.");
+                firstCorner.openDirs[0] = true;
+                return true;
+            }
+        break;
     }
     return false;
 }
@@ -171,6 +204,11 @@ function moveTo(y, x) {
     return false;
 }
 
+function tellRoom(room, message) {
+    if (!room.sayResponse(message)) {
+        describeAction("You speak, but nobody is around to hear you.");
+    }
+}
 function tellEntity(ent, message) {
     if (!ent.sayResponse(message)) {
         describeAction("The " + ent.displayName + " does not react to your words.");
