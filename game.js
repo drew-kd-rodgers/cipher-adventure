@@ -116,7 +116,7 @@ function mapDisplay() {
                     gridSpace.style.borderLeft = "thick solid black"
                 }
 
-                if (room == getCurrentRoom()) {
+                if (room == getCurrentRoom() && !gameEnded) {
                     gridSpace.style.backgroundColor = "yellow";
                 } else {
                     gridSpace.style.backgroundColor = canSee ? "rgb(150, 150, 150)" : "black";
@@ -134,7 +134,7 @@ function describeAction(override = "") {
 }
 
 document.getElementById("userinput").addEventListener("keydown", function (e) {
-    if (e.key === "Enter") {
+    if (e.key === "Enter" && !gameEnded) {
         let input = document.getElementById("userinput").value.toString().toLowerCase().split(" ");
         document.getElementById("userinput").value = "";
 
@@ -160,6 +160,13 @@ document.getElementById("userinput").addEventListener("keydown", function (e) {
 function goDirection(dir) {
     switch (dir) {
         case "north":
+            if (getCurrentRoom() == exit) {
+                gameEnded = true;
+                mapDisplay();
+                describeRoom("You step out onto bright green grass.", "It is a beautiful day out.");
+                describeAction("There is nothing left to do.");
+                return true;
+            }
             if (getCurrentRoom().openDirs[0]) {
                 return moveTo(roomPos[0]-1, roomPos[1]);
             }
@@ -214,6 +221,8 @@ function tellEntity(ent, message) {
         describeAction("The " + ent.displayName + " does not react to your words.");
     }
 }
+
+gameEnded = false;
 
 mapDisplay();
 describeRoom();
