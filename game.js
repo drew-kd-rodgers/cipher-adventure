@@ -17,7 +17,7 @@ class Room {
 const entrance = new Room("blocked entrance", "You awake in a dark room. You're an adventurer, at least you think, guided by mysterious voices. One such voice identifies itself as Vigenere and speaks to you, <br><br>\"Vo gwvgj. Patience is key.\"")
 entrance.openDirs = [true, false, false, false];
 
-const firstHall = new Room("decrepit hall", "There are cracks along the stone walls. Wherever you are, it has clearly not been maintained for some time.")
+const firstHall = new Room("decrepit hall", "There are cracks along the stone walls. Wherever you are, it has clearly not been maintained for some time. A voice named Caesar warns,<br><br>\"Phbibqlk kloqetbpq!\"")
 firstHall.openDirs = [true, false, true, false];
 
 const firstCorner = new Room("dusty corner", "To the north is a metal door chained up with a lock, but there is white light coming through. To the west is a foreboding doorway into a dark room.")
@@ -37,6 +37,9 @@ canSee = false;
 
 function getCurrentRoom() {
     return roomGrid[roomPos[0]][roomPos[1]];
+}
+function getRoom(y, x) {
+    return roomGrid[y][x];
 }
 
 function mapDisplay() {
@@ -63,8 +66,67 @@ function mapDisplay() {
     }
 }
 
-function describeRoom() {
-    document.getElementById("roomdesc").innerHTML = "You are in a " + getCurrentRoom().displayName + ".<br><br>" + getCurrentRoom().desc;
+function describeRoom(overrideName = "", overrideDesc = "") {
+    document.getElementById("roomdesc").innerHTML = (overrideName == "" ? "You are in a " + getCurrentRoom().displayName + "." : overrideName) + "<br><br>" + (overrideDesc == "" ? getCurrentRoom().desc : overrideDesc);
+}
+function describeAction(override = "") {
+    document.getElementById("actiondesc").innerHTML = (override == "" ? "What will you do?" : override) 
+}
+
+document.getElementById("userinput").addEventListener("keydown", function (e) {
+    if (e.key === "Enter") {
+        let input = document.getElementById("userinput").value.toString().toLowerCase().split(" ");
+        document.getElementById("userinput").value = "";
+
+        switch (input[0]) {
+            case "go":
+                if (!goDirection(input[1])) {
+                    describeAction("Can't go there.");
+                }
+                return;
+        }
+        describeAction("Can't do that.");
+    }
+});
+
+function goDirection(dir) {
+    switch (dir) {
+        case "north":
+            if (getCurrentRoom().openDirs[0]) {
+                return moveTo(roomPos[0]-1, roomPos[1]);
+            }
+        break;
+        case "east":
+            if (getCurrentRoom().openDirs[1]) {
+                return moveTo(roomPos[0], roomPos[1]+1);
+            }
+        break;
+        case "south":
+            if (getCurrentRoom().openDirs[2]) {
+                return moveTo(roomPos[0]+1, roomPos[1]);
+            }
+        break;
+        case "west":
+            if (getCurrentRoom().openDirs[3]) {
+                return moveTo(roomPos[0], roomPos[1]-1);
+            }
+        break;
+    }
+    return false;
+}
+function moveTo(y, x) {
+    if (y >= 0 && y < roomGrid.length && x >= 0 && x < roomGrid[y].length) {
+        let target = getRoom(y, x);
+        if (target != null) {
+            canSee = true;
+            roomPos = [y,x];
+            mapDisplay();
+            describeRoom();
+            describeAction();
+            return true;
+        }
+    }
+    return false;
 }
 
 mapDisplay();
